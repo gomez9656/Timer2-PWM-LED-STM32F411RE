@@ -5,7 +5,7 @@
  *      Author: PC
  */
 #include "main.h"
-extern TIM_HandleTypeDef htimer3;
+extern TIM_HandleTypeDef htimer2;
 
 void SysTick_Handler(void){
 
@@ -14,7 +14,7 @@ void SysTick_Handler(void){
 
 }
 
-void TIM3_IRQHandler(){
+void TIM2_IRQHandler(){
 
-	HAL_TIM_IRQHandler(&htimer3);
+	HAL_TIM_IRQHandler(&htimer2);
 }

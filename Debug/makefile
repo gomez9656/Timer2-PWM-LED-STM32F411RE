@@ -28,13 +28,13 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: Timer3-OC-PWM.elf
+all: Timer3-OC-PWM-LED.elf
 
 # Tool invocations
-Timer3-OC-PWM.elf: $(OBJS) $(USER_OBJS) ../STM32F411RETx_FLASH.ld
+Timer3-OC-PWM-LED.elf: $(OBJS) $(USER_OBJS) ../STM32F411RETx_FLASH.ld
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F411RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Timer3-OC-PWM.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F411RETx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "Timer3-OC-PWM-LED.elf" @"objects.list" $(USER_OBJS) $(LIBS) -lm
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -46,8 +46,8 @@ clean:
 
 post-build:
 	-@echo 'Generating hex and Printing size information:'
-	arm-none-eabi-objcopy -O ihex "Timer3-OC-PWM.elf" "Timer3-OC-PWM.hex"
-	arm-none-eabi-size "Timer3-OC-PWM.elf"
+	arm-none-eabi-objcopy -O ihex "Timer3-OC-PWM-LED.elf" "Timer3-OC-PWM-LED.hex"
+	arm-none-eabi-size "Timer3-OC-PWM-LED.elf"
 	-@echo ' '
 
 .PHONY: all clean dependents

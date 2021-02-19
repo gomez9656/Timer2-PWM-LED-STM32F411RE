@@ -1,12 +1,13 @@
 /*
  * main.c
 
+
  *
  *  Created on: 23/01/2021
  *      Author: gomez9656
  *
- *      This program is to use ITM3 output channels 1,2,3 and 4 in the Output
- *      Capture Mode. This, to generate 500, 1000, 2000 and 4000 Hz signals
+ *      This program is to use ITM3 as PWM. You can use channel 1, 2, 3 and 4 as PWM
+ *      for 20%, 40%, 60& and 80%
  */
 
 #include "stm32f4xx.h"
@@ -19,10 +20,10 @@
 void SystemCoreClockConfig(uint8_t clock_freq);
 void Error_handler(void);
 void GPIO_Init(void);
-void TIMER3_Init(void);
+void TIMER2_Init(void);
 void UART2_Init(void);
 
-TIM_HandleTypeDef htimer3;
+TIM_HandleTypeDef htimer2;
 UART_HandleTypeDef huart2; //Handle of UART 2
 
 /*
@@ -38,19 +39,35 @@ uint32_t ccr_content;
 
 int main(){
 
+	uint16_t brightness = 0;
+
 	/* Basic initialization  */
 	HAL_Init();
 
 	SystemCoreClockConfig(SYS_CLOCK_FREQ_50_MHZ);
 
-	GPIO_Init();
+	//GPIO_Init();
 
-	UART2_Init();
+	//UART2_Init();
 
-	TIMER3_Init();
+	TIMER2_Init();
 
+	if(HAL_TIM_PWM_Start(&htimer2, TIM_CHANNEL_1) != HAL_OK){
+		Error_handler();
+	}
 
-	while(1);
+	while(1){
+
+		while( brightness < htimer2.Init.Period){
+			brightness+=30;
+			__HAL_TIM_SET_COMPARE(&htimer2, TIM_CHANNEL_1, brightness);
+			HAL_Delay(10); //Delay of 1 ms
+		}
+
+		while(brightness > 0){
+			brightness--;
+		}
+	}
 
 	return 0;
 }
@@ -58,23 +75,28 @@ int main(){
 /*
  * Initialize Timer 3 in PWM Mode
  */
-void TIMER3_Init(void){
+void TIMER2_Init(void){
 
-	TIM_OC_InitTypeDef tim3PWM_Config;
+	TIM_OC_InitTypeDef tim2PWM_Config;
 	//Low level initialization
-	htimer3.Instance = TIM3;
-	htimer3.Init.Period = 0xFFFFFFFF;
-	htimer3.Init.Prescaler = 1; //IF you choose system clock of 50MHz, with a prescaler of 1 it will generate a 25MHz signal
+	htimer2.Instance = TIM2;
+	htimer2.Init.Period = 10000 - 1;
+	htimer2.Init.Prescaler = 4;
 
-	if (HAL_TIM_PWM_Init(&htimer3) != HAL_OK){
+	if (HAL_TIM_PWM_Init(&htimer2) != HAL_OK){
 		Error_handler();
 	}
 
-	//Low level initalization
-	tim3PWM_Config.OCMode = TIM_OCMODE_PWM1;
-	tim3PWM_Config.OCPolarity = TIM_OCPOLARITY_HIGH;
-	tim3PWM_Config.Pulse = 0;
+	memset(&tim2PWM_Config, 0, sizeof(tim2PWM_Config));
 
+	//Low level initialization
+	tim2PWM_Config.OCMode = TIM_OCMODE_PWM1;
+	tim2PWM_Config.OCPolarity = TIM_OCPOLARITY_HIGH;
+
+	tim2PWM_Config.Pulse = 0;
+	if (HAL_TIM_PWM_ConfigChannel(&htimer2, &tim2PWM_Config, TIM_CHANNEL_1) != HAL_OK){
+		Error_handler();
+	}
 
 }
 
