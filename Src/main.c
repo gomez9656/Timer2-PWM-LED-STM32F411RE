@@ -6,8 +6,7 @@
  *  Created on: 23/01/2021
  *      Author: gomez9656
  *
- *      This program is to use ITM3 as PWM. You can use channel 1, 2, 3 and 4 as PWM
- *      for 20%, 40%, 60& and 80%
+ *      This program is to use TIM2 Output Channel as PWM. Use PA5 LED to see it working
  */
 
 #include "stm32f4xx.h"
